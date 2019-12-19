@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import './emotion_icons.dart';
 
 void main() => runApp(MyApp());
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
 class GradientTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var randomNumber = Random();
     return Scaffold(
       body: SizedBox.expand(
         child: Column(
@@ -69,7 +71,10 @@ class GradientTextWidget extends StatelessWidget {
               ],
             ),
             ToggleButtonGradient(),
-            GradientIconButtons(),
+            GradientIconButtons(
+              reaction_1: randomNumber.nextInt(100),
+              reaction_2: randomNumber.nextInt(100),
+            ),
           ],
         ),
       ),
@@ -249,9 +254,10 @@ class _ToggleButtonGradientState extends State<ToggleButtonGradient> {
 }
 
 class GradientIconButtons extends StatefulWidget {
-  // GradientIconButtons({@required this.gradient});
+  int reaction_1;
+  int reaction_2;
 
-  // final Gradient gradient;
+  GradientIconButtons({this.reaction_1, this.reaction_2});
 
   @override
   _GradientIconButtonsState createState() => _GradientIconButtonsState();
@@ -260,19 +266,85 @@ class GradientIconButtons extends StatefulWidget {
 class _GradientIconButtonsState extends State<GradientIconButtons> {
   bool buttonSelected_1 = false;
   bool buttonSelected_2 = false;
+
+  int currState = -1;
+  int prevState = -1;
+
+  int prevReaction_1 = 0;
+  int prevReaction_2 = 0;
+  int currReaction_1 = 0;
+  int currReaction_2 = 0;
+
+  void reactionTracker(index) {
+    currState = index;
+    if (prevState == -1) {
+      switch (index) {
+        case 0:
+          {
+            widget.reaction_1++;
+          }
+          break;
+        case 1:
+          {
+            widget.reaction_2++;
+          }
+          break;
+      }
+    } else if (prevState != -1 && currState != prevState) {
+      switch (prevState) {
+        case 0:
+          {
+            widget.reaction_1--;
+          }
+          break;
+        case 1:
+          {
+            widget.reaction_2--;
+          }
+          break;
+      }
+      switch (index) {
+        case 0:
+          {
+            widget.reaction_1++;
+          }
+          break;
+        case 1:
+          {
+            widget.reaction_2++;
+          }
+          break;
+      }
+    } else if (prevState == currState) {
+      switch (index) {
+        case 0:
+          {
+            widget.reaction_1--;
+          }
+          break;
+        case 1:
+          {
+            widget.reaction_2--;
+          }
+          break;
+      }
+    }
+    prevState = currState;
+  }
+
   var unselectedGradient_1 = LinearGradient(
     colors: [
       Color.fromRGBO(189, 195, 199, 1),
       Color.fromRGBO(44, 62, 80, 1),
     ],
-  ); 
+  );
 
   var unselectedGradient_2 = LinearGradient(
     colors: [
       Color.fromRGBO(189, 195, 199, 1),
       Color.fromRGBO(44, 62, 80, 1),
     ],
-  ); 
+  );
 
   var gradient_1 = LinearGradient(
     colors: [
@@ -288,7 +360,7 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
     ],
   );
 
-  var selectedGradient_1= LinearGradient(
+  var selectedGradient_1 = LinearGradient(
     colors: [
       Colors.red,
       Colors.pink,
@@ -334,142 +406,90 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: <Widget>[
-        ShaderMask(
-          shaderCallback: (bounds) => gradient_1.createShader(
-            Rect.fromLTWH(0, 0, 50, 50),
-          ),
-          child: IconButton(
-            iconSize: 50,
-            icon: Icon(Icons.ac_unit),
-            color: Colors.white,
-            onPressed: () {
-              setState(() {
-                if (buttonSelected_1) {
-                  buttonSelected_1 = false;
-                  gradient_1 = unselectedGradient_1;
-                  // unselectedGradient = LinearGradient(
-                  //   colors: [
-                  //     Color.fromRGBO(189, 195, 199, 1),
-                  //     Color.fromRGBO(44, 62, 80, 1),
-                  //   ],);
-                } else {
-                  buttonSelected_1 = true;
-                  // buttonSelected_2 = false;
-                  gradient_1 = selectedGradient_1;
-                }
-              });
-            },
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ShaderMask(
+              shaderCallback: (bounds) => gradient_1.createShader(
+                Rect.fromLTWH(0, 0, 50, 50),
+              ),
+              child: IconButton(
+                iconSize: 50,
+                icon: Icon(Icons.ac_unit),
+                color: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    if (buttonSelected_1) {
+                      buttonSelected_1 = false;
+                      gradient_1 = unselectedGradient_1;
+                      reactionTracker(0);
+                    } else {
+                      buttonSelected_1 = true;
+                      buttonSelected_2 = false;
+                      gradient_1 = selectedGradient_1;
+                      gradient_2 = unselectedGradient_2;
+                      reactionTracker(0);
+                    }
+                  });
+                },
+              ),
+            ),
+            ShaderMask(
+              shaderCallback: (bounds) => gradient_2.createShader(
+                Rect.fromLTWH(0, 0, 50, 50),
+              ),
+              child: IconButton(
+                iconSize: 50,
+                icon: Icon(Icons.ac_unit),
+                color: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    if (buttonSelected_2) {
+                      buttonSelected_2 = false;
+                      gradient_2 = unselectedGradient_2;
+                      reactionTracker(1);
+                    } else {
+                      buttonSelected_2 = true;
+                      buttonSelected_1 = false;
+                      gradient_1 = unselectedGradient_1;
+                      gradient_2 = selectedGradient_2;
+                      reactionTracker(1);
+                    }
+                  });
+                },
+              ),
+            ),
+          ],
         ),
-        ShaderMask(
-          shaderCallback: (bounds) => gradient_2.createShader(
-            Rect.fromLTWH(0, 0, 50, 50),
-          ),
-          child: IconButton(
-            iconSize: 50,
-            icon: Icon(Icons.ac_unit),
-            color: Colors.white,
-            onPressed: () {
-              setState(() {
-                if (buttonSelected_2) {
-                  buttonSelected_2 = false;
-                  gradient_2 = unselectedGradient_2;
-                  // unselectedGradient = LinearGradient(
-                  //   colors: [
-                  //     Color.fromRGBO(189, 195, 199, 1),
-                  //     Color.fromRGBO(44, 62, 80, 1),
-                  //   ],);
-                } else {
-                  buttonSelected_2 = true;
-                  // buttonSelected_1 = false;
-                  gradient_2 = selectedGradient_2;
-                }
-              });
-            },
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '${widget.reaction_1}',
+              style: TextStyle(
+                fontSize: 30,
+              ),
+            ),
+            SizedBox(
+              width: 35,
+            ),
+            Text(
+              '${widget.reaction_2}',
+              style: TextStyle(
+                fontSize: 30,
+              ),
+            ),
+          ],
         ),
-        // ShaderMask(
-        //   shaderCallback: (bounds) => gradient_3.createShader(
-        //     Rect.fromLTWH(0, 0, 50, 50),
-        //   ),
-        //   child: IconButton(
-        //     iconSize: 50,
-        //     icon: Icon(Icons.ac_unit),
-        //     color: Colors.white,
-        //     onPressed: () {
-        //       setState(() {
-        //         if (buttonSelected) {
-        //           buttonSelected = false;
-        //           gradient_3 = unselectedGradient_3;
-        //           // unselectedGradient = LinearGradient(
-        //           //   colors: [
-        //           //     Color.fromRGBO(189, 195, 199, 1),
-        //           //     Color.fromRGBO(44, 62, 80, 1),
-        //           //   ],);
-        //         } else {
-        //           buttonSelected = true;
-        //           gradient_3 = selectedGradient_3;
-        //         }
-        //       });
-        //     },
-        //   ),
-        // ),
+        Text(
+          'Total Reactions: ${widget.reaction_1 + widget.reaction_2}',
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        )
       ],
     );
   }
 }
-
-// bool buttonSelected = false;
-//   var gradientBefore = LinearGradient(
-//     colors: [
-//       Color.fromRGBO(189, 195, 199, 1),
-//       Color.fromRGBO(44, 62, 80, 1),
-//     ],
-//   );
-//   @override
-//   Widget build(BuildContext context) {
-//     return ShaderMask(
-//       shaderCallback: (bounds) => gradientBefore.createShader(
-//         Rect.fromLTWH(0, 0, 50, 50),
-//       ),
-//       child: IconButton(
-//         iconSize: 50,
-//         icon: Icon(Icons.ac_unit),
-//         color: Colors.white,
-//         onPressed: () {
-//           setState(() {
-//             if (buttonSelected) {
-//               buttonSelected = false;
-//               gradientBefore = LinearGradient(
-//                 colors: [
-//                   Color.fromRGBO(189, 195, 199, 1),
-//                   Color.fromRGBO(44, 62, 80, 1),
-//                 ],
-//               );
-//             } else {
-//               buttonSelected = true;
-//               gradientBefore = LinearGradient(
-//                 colors: [
-//                   Colors.red,
-//                   Colors.pink,
-//                   Colors.purple,
-//                   Colors.deepPurple,
-//                   Colors.deepPurple,
-//                   Colors.indigo,
-//                   Colors.blue,
-//                   Colors.lightBlue,
-//                   Colors.cyan,
-//                   Colors.teal,
-//                   Colors.green,
-//                   Colors.lightGreen,
-//                   Colors.lime,
-//                   Colors.yellow,
-//                   Colors.amber,
-//                   Colors.orange,
-//                   Colors.deepOrange,
-//                 ],
-//               );
-//             }
