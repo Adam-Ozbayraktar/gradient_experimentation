@@ -270,10 +270,8 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
   int currState = -1;
   int prevState = -1;
 
-  int prevReaction_1 = 0;
-  int prevReaction_2 = 0;
-  int currReaction_1 = 0;
-  int currReaction_2 = 0;
+  int buttonTracker_1 = 0;
+  int buttonTracker_2 = 0;
 
   void reactionTracker(index) {
     currState = index;
@@ -282,10 +280,12 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
         case 0:
           {
             widget.reaction_1++;
+            buttonTracker_1++;
           }
           break;
         case 1:
           {
+            buttonTracker_2++;
             widget.reaction_2++;
           }
           break;
@@ -294,12 +294,22 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
       switch (prevState) {
         case 0:
           {
-            widget.reaction_1--;
+            if (buttonTracker_1 % 2 != 0) {
+              widget.reaction_1--;
+              buttonTracker_1 = 0;
+            } else {
+              buttonTracker_1 = 0;
+            }
           }
           break;
         case 1:
           {
-            widget.reaction_2--;
+            if (buttonTracker_2 % 2 != 0) {
+              widget.reaction_2--;
+              buttonTracker_2 = 0;
+            } else {
+              buttonTracker_2 = 0;
+            }
           }
           break;
       }
@@ -307,11 +317,13 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
         case 0:
           {
             widget.reaction_1++;
+            buttonTracker_1++;
           }
           break;
         case 1:
           {
             widget.reaction_2++;
+            buttonTracker_2++;
           }
           break;
       }
@@ -319,12 +331,24 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
       switch (index) {
         case 0:
           {
-            widget.reaction_1--;
+            if (buttonTracker_1 % 2 == 0) {
+              widget.reaction_1++;
+              buttonTracker_1++;
+            } else {
+              widget.reaction_1--;
+              buttonTracker_1++;
+            }
           }
           break;
         case 1:
           {
-            widget.reaction_2--;
+            if (buttonTracker_2 % 2 == 0) {
+              widget.reaction_2++;
+              buttonTracker_2++;
+            } else {
+              widget.reaction_2--;
+              buttonTracker_2++;
+            }
           }
           break;
       }
@@ -362,45 +386,51 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
 
   var selectedGradient_1 = LinearGradient(
     colors: [
-      Colors.red,
-      Colors.pink,
-      Colors.purple,
-      Colors.deepPurple,
-      Colors.deepPurple,
-      Colors.indigo,
-      Colors.blue,
-      Colors.lightBlue,
-      Colors.cyan,
-      Colors.teal,
-      Colors.green,
-      Colors.lightGreen,
-      Colors.lime,
-      Colors.yellow,
-      Colors.amber,
-      Colors.orange,
-      Colors.deepOrange,
+      Color.fromRGBO(131, 58, 180, 1),
+      Color.fromRGBO(253, 29, 29, 1),
+      Color.fromRGBO(252, 176, 69, 1),
+      // Colors.red,
+      // Colors.pink,
+      // Colors.purple,
+      // Colors.deepPurple,
+      // Colors.deepPurple,
+      // Colors.indigo,
+      // Colors.blue,
+      // Colors.lightBlue,
+      // Colors.cyan,
+      // Colors.teal,
+      // Colors.green,
+      // Colors.lightGreen,
+      // Colors.lime,
+      // Colors.yellow,
+      // Colors.amber,
+      // Colors.orange,
+      // Colors.deepOrange,
     ],
   );
 
   var selectedGradient_2 = LinearGradient(
     colors: [
-      Colors.red,
-      Colors.pink,
-      Colors.purple,
-      Colors.deepPurple,
-      Colors.deepPurple,
-      Colors.indigo,
-      Colors.blue,
-      Colors.lightBlue,
-      Colors.cyan,
-      Colors.teal,
-      Colors.green,
-      Colors.lightGreen,
-      Colors.lime,
-      Colors.yellow,
-      Colors.amber,
-      Colors.orange,
-      Colors.deepOrange,
+      Color.fromRGBO(131, 58, 180, 1),
+      Color.fromRGBO(253, 29, 29, 1),
+      Color.fromRGBO(252, 176, 69, 1),
+      // Colors.red,
+      // Colors.pink,
+      // Colors.purple,
+      // Colors.deepPurple,
+      // Colors.deepPurple,
+      // Colors.indigo,
+      // Colors.blue,
+      // Colors.lightBlue,
+      // Colors.cyan,
+      // Colors.teal,
+      // Colors.green,
+      // Colors.lightGreen,
+      // Colors.lime,
+      // Colors.yellow,
+      // Colors.amber,
+      // Colors.orange,
+      // Colors.deepOrange,
     ],
   );
 
@@ -413,11 +443,11 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
           children: <Widget>[
             ShaderMask(
               shaderCallback: (bounds) => gradient_1.createShader(
-                Rect.fromLTWH(0, 0, 50, 50),
+                Rect.fromLTWH(0, 0, 45, 50),
               ),
               child: IconButton(
-                iconSize: 50,
-                icon: Icon(Icons.ac_unit),
+                iconSize: 40,
+                icon: Icon(Emotion.emo_happy),
                 color: Colors.white,
                 onPressed: () {
                   setState(() {
@@ -436,13 +466,16 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
                 },
               ),
             ),
+            SizedBox(
+              width: 10,
+            ),
             ShaderMask(
               shaderCallback: (bounds) => gradient_2.createShader(
-                Rect.fromLTWH(0, 0, 50, 50),
+                Rect.fromLTWH(0, 0, 45, 50),
               ),
               child: IconButton(
-                iconSize: 50,
-                icon: Icon(Icons.ac_unit),
+                iconSize: 45,
+                icon: Icon(Emotion.emo_cry),
                 color: Colors.white,
                 onPressed: () {
                   setState(() {
@@ -485,6 +518,18 @@ class _GradientIconButtonsState extends State<GradientIconButtons> {
         ),
         Text(
           'Total Reactions: ${widget.reaction_1 + widget.reaction_2}',
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        ),
+        Text(
+          'Button 1: $buttonTracker_1',
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        ),
+        Text(
+          'Button 2: $buttonTracker_2',
           style: TextStyle(
             fontSize: 30,
           ),
